@@ -19,7 +19,7 @@ function logForce(...args) {
 }
 
 function findParentDiv(actor, item) {
-    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable`)
+    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable .form-group .form-fields`)
 }
 
 /**
