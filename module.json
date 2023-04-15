@@ -27,7 +27,7 @@
     }
   ],
   "esmodules": [
-    "module/sw5e-weapon-damage.js"
+    "module/weapon-damage.js"
   ],
   "languages": [
     {
