@@ -29,6 +29,9 @@
   "esmodules": [
     "module/weapon-damage.js"
   ],
+  "styles": [
+    "styles/sw5e-weapon-damage.css"
+  ],
   "languages": [
     {
       "lang": "en",
