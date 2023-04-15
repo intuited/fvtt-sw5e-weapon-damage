@@ -1,0 +1,39 @@
+{
+  "name": "sw5e-weapon-damage",
+  "title": "sw5e Weapon Damage",
+  "description":  "Tracks weapon damage for the Weapon Sundering variant rule",
+	"compatibility": {
+		"minimum": "10",
+		"verified": "10"
+	},
+  "relationships": {
+    "systems": [
+      {
+        "id": "sw5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "2.0.2.2.2.6"
+        }
+      }
+    ]
+  },
+  "version": "0.0.1",
+  "author": "Ted Tibbetts",
+  "authors": [
+    {
+      "name": "Ted Tibbetts",
+      "discord": "circulated.@6126",
+      "url": "https://github.com/intuited"
+    }
+  ],
+  "esmodules": [
+    "module/sw5e-weapon-damage.js"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ]
+}
