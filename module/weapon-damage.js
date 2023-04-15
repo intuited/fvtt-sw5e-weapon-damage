@@ -19,13 +19,6 @@ function logForce(...args) {
     console.log(MODULE_ID, '|', ...args);
 }
 
-function findFormFields(actor, item) {
-    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable .form-group .form-fields`);
-}
-function findRollable(actor, item) {
-    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable`);
-}
-
 /**
  * A weapon has max HP equal to the average roll of its damage dice.
  */
@@ -77,15 +70,16 @@ Hooks.on('renderedSwaltSheet', async (app, html, {actor: actor, items: items}) =
     actor = game.collections.get('Actor').get(actor._id);
     for (let item of actor.items.filter(i => i.type === 'weapon')) {
         log('    weapon:', item);
-        const formFields = findFormFields(actor, item);
+        const rollable = $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable`);
+        const formFields = rollable.find(`.form-group .form-fields`);
+        const renderedWeaponDamage = await renderTemplate(WEAPON_DAMAGE_TEMPLATE, item);
+
         if (formFields.length) {
             // Weapons which use ammunition already have a form-fields div that we append to
-            formFields.append(await renderTemplate(WEAPON_DAMAGE_TEMPLATE, item));
+            formFields.append(renderedWeaponDamage);
         } else {
             // For other weapons, we create that same structure
-            const rollable = findRollable(actor, item);
             log('    form-fields div not found.  actor, item:');
-            const renderedWeaponDamage = await renderTemplate(WEAPON_DAMAGE_TEMPLATE, item);
             rollable.append(await renderTemplate(FORM_FIELDS_TEMPLATE, renderedWeaponDamage));
         }
     }
