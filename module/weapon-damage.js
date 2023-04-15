@@ -39,7 +39,9 @@ function weaponMaxHP(weapon) {
         return 0;
     }
 
-    const [_, n, d] = match;
+    let [_, n, d] = match;
+    n = Number(n);
+    d = Number(d);
     return Math.ceil( (n + n*d) / 2 );
 }
 
