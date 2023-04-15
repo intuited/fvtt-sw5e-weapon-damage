@@ -82,5 +82,11 @@ Hooks.on('renderedSwaltSheet', async (app, html, {actor: actor, items: items}) =
             log('    form-fields div not found.  actor, item:');
             rollable.append(await renderTemplate(FORM_FIELDS_TEMPLATE, renderedWeaponDamage));
         }
+
+        const newElements = rollable.find('input.weapon-damage-hp')[0]
+        newElements.addEventListener('change', ({srcElement: {value: val}}) => {
+            log('weapon-damage-hp change el; this, val:', this, val);
+            item.setFlag(MODULE_ID, 'currentHP', val);
+        });
     }
 });
