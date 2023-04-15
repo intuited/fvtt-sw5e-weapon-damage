@@ -1,6 +1,7 @@
 const MODULE_ID = 'sw5e-weapon-damage';
 const MODULE_ABBREV = 'SW5EWD';
-const TEMPLATE_PATH = `modules/${MODULE_ID}/templates/weapon-damage.hbs`;
+const WEAPON_DAMAGE_TEMPLATE = `modules/${MODULE_ID}/templates/weapon-damage.hbs`;
+const FORM_FIELDS_TEMPLATE = `modules/${MODULE_ID}/templates/form-fields.hbs`;
 
 Hooks.once('devModeReady', ({ registerPackageDebugFlag }) => {
     registerPackageDebugFlag(MODULE_ID);
@@ -18,8 +19,11 @@ function logForce(...args) {
     console.log(MODULE_ID, '|', ...args);
 }
 
-function findParentDiv(actor, item) {
-    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable .form-group .form-fields`)
+function findFormFields(actor, item) {
+    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable .form-group .form-fields`);
+}
+function findRollable(actor, item) {
+    return $(`#ActorSheet5eCharacter-Actor-${actor.id} [data-item-id='${item.id}'] .item-name.rollable`);
 }
 
 /**
@@ -60,14 +64,29 @@ Handlebars.registerHelper("itemMaxHP", function (options) {
     const item = this;
     return weaponMaxHP(item);
 });
+/**
+ * Nest the weapon damage template inside the form fields template.
+ */
+Handlebars.registerHelper("weaponDamage", async function (options) {
+    return await renderTemplate(WEAPON_DAMAGE_TEMPLATE, this);
+});
 
 Hooks.on('renderedSwaltSheet', async (app, html, {actor: actor, items: items}) => {
     log('renderedSwaltSheet hook: this, app, html, actor, items', this, app, html, actor, items);
-    // Get an Actor
+    // Get an Actor5e object for the actor we're working with
     actor = game.collections.get('Actor').get(actor._id);
     for (let item of actor.items.filter(i => i.type === 'weapon')) {
         log('    weapon:', item);
-        // for some reason we need to cast this object to the right class
-        findParentDiv(actor, item).append(await renderTemplate(TEMPLATE_PATH, item));
+        const formFields = findFormFields(actor, item);
+        if (formFields.length) {
+            // Weapons which use ammunition already have a form-fields div that we append to
+            formFields.append(await renderTemplate(WEAPON_DAMAGE_TEMPLATE, item));
+        } else {
+            // For other weapons, we create that same structure
+            const rollable = findRollable(actor, item);
+            log('    form-fields div not found.  actor, item:');
+            const renderedWeaponDamage = await renderTemplate(WEAPON_DAMAGE_TEMPLATE, item);
+            rollable.append(await renderTemplate(FORM_FIELDS_TEMPLATE, renderedWeaponDamage));
+        }
     }
 });
